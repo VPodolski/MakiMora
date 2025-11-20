@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MakiMora.Core.Entities
 {
-    public class InventorySupplyItem
+    public class InventorySupplyItem : BaseEntity
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public new Guid Id { get; set; } = Guid.NewGuid();
         
         [Required]
         public Guid SupplyId { get; set; }

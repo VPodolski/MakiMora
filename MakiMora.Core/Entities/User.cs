@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MakiMora.Core.Entities
 {
-    public class User
+    public class User : BaseEntity
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public new Guid Id { get; set; } = Guid.NewGuid();
         
         [Required]
         [MaxLength(50)]

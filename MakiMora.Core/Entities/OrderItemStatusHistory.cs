@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MakiMora.Core.Entities
 {
-    public class OrderItemStatusHistory
+    public class OrderItemStatusHistory : BaseEntity
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public new Guid Id { get; set; } = Guid.NewGuid();
         
         [Required]
         public Guid OrderItemId { get; set; }

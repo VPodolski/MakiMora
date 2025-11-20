@@ -2,10 +2,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MakiMora.Core.Entities
 {
-    public class OrderStatus
+    public class OrderStatus : BaseEntity
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public new Guid Id { get; set; } = Guid.NewGuid();
         
         [Required]
         [MaxLength(50)]

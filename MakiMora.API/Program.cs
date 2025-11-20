@@ -3,9 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MakiMora.Core.Configurations;
+using MakiMora.Core.Repositories;
+using MakiMora.Core.Services;
 using MakiMora.Infrastructure.Data;
+using MakiMora.Infrastructure.Repositories;
 using System.Text;
 using AutoMapper;
+using MakiMora.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,6 +89,32 @@ builder.Services.AddSwaggerGen(c =>
 
 // Configure AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
+
+// Register repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<IUserLocationRepository, UserLocationRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+builder.Services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
+builder.Services.AddScoped<IOrderItemStatusRepository, OrderItemStatusRepository>();
+builder.Services.AddScoped<IInventorySupplyRepository, InventorySupplyRepository>();
+builder.Services.AddScoped<IInventorySupplyItemRepository, InventorySupplyItemRepository>();
+builder.Services.AddScoped<IOrderStatusHistoryRepository, OrderStatusHistoryRepository>();
+builder.Services.AddScoped<IOrderItemStatusHistoryRepository, OrderItemStatusHistoryRepository>();
+builder.Services.AddScoped<ICourierEarningRepository, CourierEarningRepository>();
+
+// Register services
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IInventorySupplyService, InventorySupplyService>();
+builder.Services.AddScoped<ICourierEarningService, CourierEarningService>();
 
 // Add CORS
 builder.Services.AddCors(options =>
