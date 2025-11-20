@@ -1,1 +1,4 @@
 .vs/
+MakiMora.Infrastructure/obj/
+MakiMora.Core/obj/
+MakiMora.API/obj/
