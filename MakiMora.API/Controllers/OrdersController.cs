@@ -84,7 +84,6 @@ namespace MakiMora.API.Controllers
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetKitchenOrders([FromQuery] Guid locationId)
         {
             // Get orders with status "pending" or "preparing" for the kitchen
-            // We'll get orders by location and filter by status on the client side for simplicity
             var orders = await _orderService.GetOrdersByLocationAsync(locationId);
             var filteredOrders = orders.Where(o => o.Status.Name == "pending" || o.Status.Name == "preparing");
 

@@ -57,7 +57,7 @@ namespace MakiMora.API.Controllers
             return Ok(response);
         }
 
-        private string GenerateJwtToken(UserDto user)
+        private string GenerateJwtToken(Core.DTOs.Auth.UserDto user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);

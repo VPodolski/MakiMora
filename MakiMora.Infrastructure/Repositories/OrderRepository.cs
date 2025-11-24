@@ -41,6 +41,50 @@ namespace MakiMora.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Order>> GetByDateRangeAsync(DateTime startDate, DateTime endDate)
+        {
+            return await _dbSet
+                .Include(o => o.Location)
+                .Include(o => o.Status)
+                .Include(o => o.Courier)
+                .Include(o => o.Assembler)
+                .Include(o => o.Items)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.Items)
+                    .ThenInclude(oi => oi.Status)
+                .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Order>> GetOrdersWithItemsAsync()
+        {
+            return await _dbSet
+                .Include(o => o.Location)
+                .Include(o => o.Status)
+                .Include(o => o.Courier)
+                .Include(o => o.Assembler)
+                .Include(o => o.Items)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.Items)
+                    .ThenInclude(oi => oi.Status)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Order>> GetByStatusAndLocationAsync(Guid statusId, Guid locationId)
+        {
+            return await _dbSet
+                .Include(o => o.Location)
+                .Include(o => o.Status)
+                .Include(o => o.Courier)
+                .Include(o => o.Assembler)
+                .Include(o => o.Items)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.Items)
+                    .ThenInclude(oi => oi.Status)
+                .Where(o => o.StatusId == statusId && o.LocationId == locationId)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Order>> GetByCourierAsync(Guid courierId)
         {
             return await _dbSet

@@ -20,5 +20,7 @@ namespace MakiMora.Core.Services
         Task<OrderDto> MarkOrderAsDeliveredAsync(Guid orderId);
         Task<IEnumerable<OrderDto>> GetOrdersByStatusAndLocationAsync(Guid statusId, Guid locationId);
         Task<OrderDto> MarkOrderAsAssembledAsync(Guid orderId);
+        Task<IEnumerable<OrderDto>> GetOrdersByLocationAsync(Guid locationId);
+        Task<OrderDto> MarkOrderAsAssembledAsync(Guid orderId);
     }
 }

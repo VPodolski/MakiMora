@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+using MakiMora.Core.Entities;
 
 namespace MakiMora.Core.DTOs
 {
@@ -55,5 +55,56 @@ namespace MakiMora.Core.DTOs
         public string? Description { get; set; }
         public int SortOrder { get; set; }
         public bool IsActive { get; set; }
+    }
+    
+    public class CreateOrderRequestDto
+    {
+        public string CustomerName { get; set; } = string.Empty;
+        public string CustomerPhone { get; set; } = string.Empty;
+        public string CustomerAddress { get; set; } = string.Empty;
+        public Guid LocationId { get; set; }
+        public decimal DeliveryFee { get; set; } = 0;
+        public string? Comment { get; set; }
+        public DateTime? DeliveryTime { get; set; }
+        public List<CreateOrderItemRequestDto> Items { get; set; } = new List<CreateOrderItemRequestDto>();
+    }
+    
+    public class CreateOrderItemRequestDto
+    {
+        public Guid ProductId { get; set; }
+        public int Quantity { get; set; } = 1;
+    }
+    
+    public class UpdateOrderItemStatusRequestDto
+    {
+        public Guid StatusId { get; set; }
+        public string? Note { get; set; }
+    }
+    
+    public class AssignCourierRequestDto
+    {
+        public Guid CourierId { get; set; }
+    }
+    
+    public class UpdateOrderStatusRequestDto
+    {
+        public Guid StatusId { get; set; }
+        public string? Note { get; set; }
+    }
+    
+    public class ProductDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public decimal Price { get; set; }
+        public Guid CategoryId { get; set; }
+        public Guid LocationId { get; set; }
+        public string? ImageUrl { get; set; }
+        public int? PreparationTime { get; set; }
+        public bool IsAvailable { get; set; } = true;
+        public bool IsOnStopList { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }
