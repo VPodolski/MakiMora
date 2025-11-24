@@ -246,6 +246,15 @@ namespace MakiMora.API.Services
             return _mapper.Map<OrderDto>(updatedOrder);
         }
 
+        public async Task<OrderDto> MarkOrderAsAssembledAsync(Guid orderId)
+        {
+            var assembledStatus = await _orderStatusRepository.GetByNameAsync("assembled");
+            if (assembledStatus == null)
+                throw new ArgumentException("Assembled status not found");
+
+            return await UpdateOrderStatusAsync(orderId, assembledStatus.Id, "Order marked as assembled/packed");
+        }
+
         public async Task<IEnumerable<OrderDto>> GetOrdersByStatusAndLocationAsync(Guid statusId, Guid locationId)
         {
             var orders = await _orderRepository.GetByStatusAndLocationAsync(statusId, locationId);
