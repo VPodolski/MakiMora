@@ -7,6 +7,7 @@ namespace MakiMora.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "manager")]
     public class InventorySuppliesController : ControllerBase
     {
         private readonly IInventorySupplyService _inventorySupplyService;
@@ -17,7 +18,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "manager")]
         public async Task<ActionResult<IEnumerable<InventorySupplyDto>>> GetSupplies([FromQuery] Guid? locationId, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         {
             IEnumerable<InventorySupplyDto> supplies;
@@ -39,7 +39,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "manager")]
         public async Task<ActionResult<InventorySupplyDto>> GetSupply(Guid id)
         {
             var supply = await _inventorySupplyService.GetSupplyByIdAsync(id);
@@ -52,7 +51,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "manager")]
         public async Task<ActionResult<InventorySupplyDto>> CreateSupply([FromBody] CreateInventorySupplyRequestDto createSupplyDto)
         {
             if (!ModelState.IsValid)
@@ -72,7 +70,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "manager")]
         public async Task<ActionResult<InventorySupplyDto>> UpdateSupply(Guid id, [FromBody] UpdateInventorySupplyRequestDto updateSupplyDto)
         {
             if (!ModelState.IsValid)
@@ -92,7 +89,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "manager")]
         public async Task<IActionResult> DeleteSupply(Guid id)
         {
             var result = await _inventorySupplyService.DeleteSupplyAsync(id);
@@ -105,7 +101,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPatch("{id}/status")]
-        [Authorize(Roles = "manager")]
         public async Task<ActionResult<InventorySupplyDto>> UpdateSupplyStatus(Guid id, [FromBody] UpdateSupplyStatusRequestDto request)
         {
             if (!ModelState.IsValid)
@@ -125,7 +120,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpGet("by-manager/{managerId}")]
-        [Authorize(Roles = "manager,hr")]
         public async Task<ActionResult<IEnumerable<InventorySupplyDto>>> GetSuppliesByManager(Guid managerId)
         {
             var supplies = await _inventorySupplyService.GetSuppliesByManagerAsync(managerId);

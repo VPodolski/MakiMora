@@ -22,12 +22,12 @@ namespace MakiMora.Core.DTOs
         public Guid OrderId { get; set; }
 
         [Required]
-        [Range(0, double.MaxValue)]
+        [Range(0, double.MaxValue, ErrorMessage = "Amount must be greater than or equal to 0")]
         public decimal Amount { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string EarningType { get; set; } = string.Empty; // delivery_fee, bonus, penalty
+        public string EarningType { get; set; } = string.Empty;
 
         [Required]
         public DateTime Date { get; set; }
@@ -36,11 +36,11 @@ namespace MakiMora.Core.DTOs
     public class UpdateCourierEarningRequestDto
     {
         [Required]
-        [Range(0, double.MaxValue)]
+        [Range(0, double.MaxValue, ErrorMessage = "Amount must be greater than or equal to 0")]
         public decimal Amount { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string EarningType { get; set; } = string.Empty; // delivery_fee, bonus, penalty
+        public string EarningType { get; set; } = string.Empty;
     }
 }

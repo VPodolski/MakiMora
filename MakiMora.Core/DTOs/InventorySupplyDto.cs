@@ -16,6 +16,8 @@ namespace MakiMora.Core.DTOs
         public DateTime CreatedAt { get; set; }
         public DateTime? DeliveredAt { get; set; }
         public List<InventorySupplyItemDto> Items { get; set; } = new List<InventorySupplyItemDto>();
+        public LocationDto Location { get; set; } = null!;
+        public UserDto Manager { get; set; } = null!;
     }
 
     public class InventorySupplyItemDto
@@ -27,6 +29,7 @@ namespace MakiMora.Core.DTOs
         public int Quantity { get; set; }
         public decimal UnitCost { get; set; }
         public decimal TotalCost { get; set; }
+        public ProductDto? Product { get; set; }
     }
 
     public class CreateInventorySupplyRequestDto
@@ -81,14 +84,12 @@ namespace MakiMora.Core.DTOs
         public DateTime ExpectedDate { get; set; }
 
         public string Status { get; set; } = "pending"; // pending, delivered, cancelled
-        
-        [Required]
-        public Guid ManagerId { get; set; }
     }
 
     public class UpdateSupplyStatusRequestDto
     {
         [Required]
+        [StringLength(20)]
         public string Status { get; set; } = string.Empty; // pending, delivered, cancelled
     }
 }

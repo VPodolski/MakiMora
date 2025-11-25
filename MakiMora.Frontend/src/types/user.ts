@@ -1,4 +1,4 @@
-export interface User {
+export interface UserDto {
   id: string;
   username: string;
   email: string;
@@ -6,20 +6,20 @@ export interface User {
   lastName: string;
   phone?: string;
   isActive: boolean;
-  roles: Role[];
-  locations: Location[];
+  roles: RoleDto[];
+  locations: LocationDto[];
   createdAt: string;
   updatedAt: string;
 }
 
-export interface Role {
+export interface RoleDto {
   id: string;
   name: string;
   description?: string;
   createdAt: string;
 }
 
-export interface Location {
+export interface LocationDto {
   id: string;
   name: string;
   address: string;
@@ -30,7 +30,7 @@ export interface Location {
   updatedAt: string;
 }
 
-export interface CreateUserRequest {
+export interface CreateUserRequestDto {
   username: string;
   email: string;
   password: string;
@@ -42,7 +42,7 @@ export interface CreateUserRequest {
   isActive: boolean;
 }
 
-export interface UpdateUserRequest {
+export interface UpdateUserRequestDto {
   username: string;
   email: string;
   firstName: string;
@@ -51,18 +51,4 @@ export interface UpdateUserRequest {
   roleIds: string[];
   locationIds: string[];
   isActive: boolean;
-}
-
-export interface AssignCourierRequestDto {
-  courierId: string;
-}
-
-export interface UpdateOrderStatusRequestDto {
-  statusId: string;
-  note?: string;
-}
-
-export interface PaginationParams {
-  page: number;
-  pageSize: number;
 }

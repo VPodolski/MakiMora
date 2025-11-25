@@ -14,7 +14,7 @@ namespace MakiMora.Core.DTOs.Auth
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(100)]
+        [StringLength(100, MinimumLength = 6)]
         public string Password { get; set; } = string.Empty;
 
         [Required]
@@ -28,8 +28,8 @@ namespace MakiMora.Core.DTOs.Auth
         [StringLength(20)]
         public string? Phone { get; set; }
 
-        public List<Guid>? RoleIds { get; set; }
-        public List<Guid>? LocationIds { get; set; }
+        public List<Guid> RoleIds { get; set; } = new List<Guid>();
+        public List<Guid> LocationIds { get; set; } = new List<Guid>();
         public bool IsActive { get; set; } = true;
     }
 }

@@ -24,6 +24,8 @@ namespace MakiMora.Core.DTOs.Auth
         [StringLength(20)]
         public string? Phone { get; set; }
 
-        public bool IsActive { get; set; }
+        public List<Guid> RoleIds { get; set; } = new List<Guid>();
+        public List<Guid> LocationIds { get; set; } = new List<Guid>();
+        public bool IsActive { get; set; } = true;
     }
 }

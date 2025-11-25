@@ -1,5 +1,4 @@
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -7,247 +6,256 @@ import {
   DialogActions,
   TextField,
   Button,
-  FormControlLabel,
-  Switch,
+  FormControl,
+  InputLabel,
   Select,
   MenuItem,
   Checkbox,
   ListItemText,
   OutlinedInput,
   Chip,
-  Box,
-  Stack
+  Box
 } from '@mui/material';
-import type { CreateUserRequest, UpdateUserRequest, User, Role, Location } from '../../types/user';
+import { UserDto, RoleDto, LocationDto } from '../../types/user';
 
 interface UserFormProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateUserRequest | UpdateUserRequest) => void;
-  user?: User | null;
-  roles: Role[];
-  locations: Location[];
+  onSubmit: (data: any) => Promise<void>;
+  user?: UserDto | null;
+  roles: RoleDto[];
+  locations: LocationDto[];
 }
 
 const UserForm: React.FC<UserFormProps> = ({ open, onClose, onSubmit, user, roles, locations }) => {
-  const isEditing = !!user;
-  
-  interface UserFormValues {
-    username: string;
-    email: string;
-    password?: string;
-    firstName: string;
-    lastName: string;
-    phone?: string;
-    roleIds: string[];
-    locationIds: string[];
-    isActive: boolean;
-  }
-  
-  const {
-    register,
-    handleSubmit,
-    reset,
-    control,
-    formState: { errors }
-  } = useForm<UserFormValues>({
-    defaultValues: {
-      username: user?.username || '',
-      email: user?.email || '',
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-      phone: user?.phone || '',
-      roleIds: user?.roles.map((r: Role) => r.id) || [],
-      locationIds: user?.locations.map((l: Location) => l.id) || [],
-      isActive: user?.isActive || false,
-      password: '' // Only for create mode
-    }
+  const [formData, setFormData] = useState<any>({
+    username: '',
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    roleIds: [],
+    locationIds: [],
+    isActive: true
   });
+  
+  const [isEditing, setIsEditing] = useState(false);
 
-  const handleClose = () => {
-    reset();
-    onClose();
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        username: user.username,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone || '',
+        roleIds: user.roles.map((r: RoleDto) => r.id),
+        locationIds: user.locations.map((l: LocationDto) => l.id),
+        isActive: user.isActive,
+        password: '' // Don't set existing password
+      });
+      setIsEditing(true);
+    } else {
+      setFormData({
+        username: '',
+        email: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        roleIds: [],
+        locationIds: [],
+        isActive: true
+      });
+      setIsEditing(false);
+    }
+  }, [user]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const handleFormSubmit = async (data: UserFormValues) => {
-    if (isEditing) {
-      const updateData: UpdateUserRequest = {
-        username: data.username,
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone,
-        roleIds: data.roleIds,
-        locationIds: data.locationIds,
-        isActive: data.isActive
-      };
-      await onSubmit(updateData);
-    } else {
-      const createData: CreateUserRequest = {
-        username: data.username,
-        email: data.email,
-        password: data.password || '',
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone,
-        roleIds: data.roleIds,
-        locationIds: data.locationIds,
-        isActive: data.isActive
-      };
-      await onSubmit(createData);
-    }
-    
-    reset();
-    handleClose();
+  const handleRoleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const {
+      target: { value },
+    } = event;
+    setFormData(prev => ({
+      ...prev,
+      roleIds: typeof value === 'string' ? value.split(',') : value,
+    }));
+  };
+
+  const handleLocationChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const {
+      target: { value },
+    } = event;
+    setFormData(prev => ({
+      ...prev,
+      locationIds: typeof value === 'string' ? value.split(',') : value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await onSubmit(formData);
+  };
+
+  const handleClose = () => {
+    onClose();
   };
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>
-        {isEditing ? 'Редактировать сотрудника' : 'Добавить нового сотрудника'}
-      </DialogTitle>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>
+          {isEditing ? 'Редактировать пользователя' : 'Создать нового пользователя'}
+        </DialogTitle>
         <DialogContent>
-          <Box sx={{ mt: 1 }}>
-            <Stack spacing={2}>
+          <Box sx={{ mt: 2 }}>
+            <TextField
+              margin="dense"
+              name="username"
+              label="Имя пользователя"
+              type="text"
+              fullWidth
+              variant="outlined"
+              value={formData.username}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              margin="dense"
+              name="email"
+              label="Email"
+              type="email"
+              fullWidth
+              variant="outlined"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              sx={{ mt: 1 }}
+            />
+            {!isEditing && (
               <TextField
-                label="Имя пользователя"
+                margin="dense"
+                name="password"
+                label="Пароль"
+                type="password"
+                fullWidth
                 variant="outlined"
-                {...register('username', { required: 'Имя пользователя обязательно' })}
-                error={!!errors.username}
-                helperText={errors.username?.message}
+                value={formData.password}
+                onChange={handleChange}
+                required
+                sx={{ mt: 1 }}
               />
-              <TextField
-                label="Email"
-                variant="outlined"
-                {...register('email', { 
-                  required: 'Email обязателен',
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Некорректный email адрес'
-                  }
-                })}
-                error={!!errors.email}
-                helperText={errors.email?.message}
-              />
-              {!isEditing && (
-                <TextField
-                  label="Пароль"
-                  type="password"
-                  variant="outlined"
-                  {...register('password', { 
-                    required: !isEditing ? 'Пароль обязателен' : false,
-                    minLength: {
-                      value: 6,
-                      message: 'Пароль должен содержать минимум 6 символов'
-                    }
-                  })}
-                  error={!!errors.password}
-                  helperText={errors.password?.message}
-                />
-              )}
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <TextField
-                  sx={{ flex: 1 }}
-                  label="Имя"
-                  variant="outlined"
-                  {...register('firstName', { required: 'Имя обязательно' })}
-                  error={!!errors.firstName}
-                  helperText={errors.firstName?.message}
-                />
-                <TextField
-                  sx={{ flex: 1 }}
-                  label="Фамилия"
-                  variant="outlined"
-                  {...register('lastName', { required: 'Фамилия обязательна' })}
-                  error={!!errors.lastName}
-                  helperText={errors.lastName?.message}
-                />
-              </Box>
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <TextField
-                  sx={{ flex: 1 }}
-                  label="Телефон"
-                  variant="outlined"
-                  {...register('phone')}
-                />
-                <Controller
-                  name="isActive"
-                  control={control}
-                  render={({ field: { onChange, value } }) => (
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={value}
-                          onChange={(e, checked) => onChange(checked)}
-                        />
-                      }
-                      label={value ? "Активный" : "Неактивный"}
-                    />
-                  )}
-                />
-              </Box>
-              <Controller
+            )}
+            <TextField
+              margin="dense"
+              name="firstName"
+              label="Имя"
+              type="text"
+              fullWidth
+              variant="outlined"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+              sx={{ mt: 1 }}
+            />
+            <TextField
+              margin="dense"
+              name="lastName"
+              label="Фамилия"
+              type="text"
+              fullWidth
+              variant="outlined"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+              sx={{ mt: 1 }}
+            />
+            <TextField
+              margin="dense"
+              name="phone"
+              label="Телефон"
+              type="tel"
+              fullWidth
+              variant="outlined"
+              value={formData.phone}
+              onChange={handleChange}
+              sx={{ mt: 1 }}
+            />
+            <FormControl fullWidth sx={{ mt: 1 }}>
+              <InputLabel>Роли</InputLabel>
+              <Select
+                multiple
                 name="roleIds"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Select
-                    multiple
-                    value={value}
-                    onChange={onChange}
-                    input={<OutlinedInput />}
-                    renderValue={(selected) => (
-                      <div>
-                        {selected.map((value) => (
-                          <Chip
-                            key={value}
-                            label={roles.find((r: Role) => r.id === value)?.name}
-                            size="small"
-                          />
-                        ))}
-                      </div>
-                    )}
-                  >
-                    {roles.map((role: Role) => (
-                      <MenuItem key={role.id} value={role.id}>
-                        <Checkbox checked={value.includes(role.id)} />
-                        <ListItemText primary={role.name} />
-                      </MenuItem>
+                value={formData.roleIds}
+                onChange={handleRoleChange}
+                input={<OutlinedInput label="Роли" />}
+                renderValue={(selected: any) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value: string) => (
+                      <Chip
+                        key={value}
+                        label={roles.find((r: RoleDto) => r.id === value)?.name}
+                        size="small"
+                      />
                     ))}
-                  </Select>
+                  </Box>
                 )}
-              />
-              <Controller
+              >
+                {roles.map((role: RoleDto) => (
+                  <MenuItem key={role.id} value={role.id}>
+                    <Checkbox checked={formData.roleIds.indexOf(role.id) > -1} />
+                    <ListItemText primary={role.name} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth sx={{ mt: 1 }}>
+              <InputLabel>Локации</InputLabel>
+              <Select
+                multiple
                 name="locationIds"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Select
-                    multiple
-                    value={value}
-                    onChange={onChange}
-                    input={<OutlinedInput />}
-                    renderValue={(selected) => (
-                      <div>
-                        {selected.map((value) => (
-                          <Chip
-                            key={value}
-                            label={locations.find((l: Location) => l.id === value)?.name}
-                            size="small"
-                          />
-                        ))}
-                      </div>
-                    )}
-                  >
-                    {locations.map((location: Location) => (
-                      <MenuItem key={location.id} value={location.id}>
-                        <Checkbox checked={value.includes(location.id)} />
-                        <ListItemText primary={location.name} />
-                      </MenuItem>
+                value={formData.locationIds}
+                onChange={handleLocationChange}
+                input={<OutlinedInput label="Локации" />}
+                renderValue={(selected: any) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value: string) => (
+                      <Chip
+                        key={value}
+                        label={locations.find((l: LocationDto) => l.id === value)?.name}
+                        size="small"
+                      />
                     ))}
-                  </Select>
+                  </Box>
                 )}
-              />
-            </Stack>
+              >
+                {locations.map((location: LocationDto) => (
+                  <MenuItem key={location.id} value={location.id}>
+                    <Checkbox checked={formData.locationIds.indexOf(location.id) > -1} />
+                    <ListItemText primary={location.name} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Box sx={{ mt: 2 }}>
+              <label>
+                <input
+                  type="checkbox"
+                  name="isActive"
+                  checked={formData.isActive}
+                  onChange={(e) => setFormData(prev => ({ ...prev, isActive: (e.target as HTMLInputElement).checked }))}
+                />
+                Активный
+              </label>
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions>

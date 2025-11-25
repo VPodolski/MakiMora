@@ -7,6 +7,7 @@ namespace MakiMora.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "manager")]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -17,7 +18,7 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories([FromQuery] Guid? locationId)
         {
             IEnumerable<CategoryDto> categories;
@@ -35,7 +36,7 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult<CategoryDto>> GetCategory(Guid id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
@@ -48,7 +49,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "manager")]
         public async Task<ActionResult<CategoryDto>> CreateCategory([FromBody] CreateCategoryRequestDto createCategoryDto)
         {
             if (!ModelState.IsValid)
@@ -68,7 +68,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "manager")]
         public async Task<ActionResult<CategoryDto>> UpdateCategory(Guid id, [FromBody] UpdateCategoryRequestDto updateCategoryDto)
         {
             if (!ModelState.IsValid)
@@ -88,7 +87,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "manager")]
         public async Task<IActionResult> DeleteCategory(Guid id)
         {
             var result = await _categoryService.DeleteCategoryAsync(id);
@@ -101,7 +99,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpGet("with-products")]
-        [Authorize(Roles = "manager,hr")]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategoriesWithProducts([FromQuery] Guid locationId)
         {
             if (locationId == Guid.Empty)

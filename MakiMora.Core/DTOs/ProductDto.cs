@@ -65,4 +65,14 @@ namespace MakiMora.Core.DTOs
         [Required]
         public bool IsAvailable { get; set; }
     }
+
+    public class UpdateProductAvailabilityRequestDto
+    {
+        public bool IsAvailable { get; set; }
+    }
+
+    public class UpdateProductStopListStatusRequestDto
+    {
+        public bool IsOnStopList { get; set; }
+    }
 }

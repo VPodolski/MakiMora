@@ -7,6 +7,7 @@ namespace MakiMora.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "manager,hr")]
     public class CourierEarningsController : ControllerBase
     {
         private readonly ICourierEarningService _courierEarningService;
@@ -17,7 +18,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "manager,hr,courier")]
         public async Task<ActionResult<IEnumerable<CourierEarningDto>>> GetEarnings([FromQuery] Guid? courierId, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         {
             IEnumerable<CourierEarningDto> earnings;
@@ -43,7 +43,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "manager,hr,courier")]
         public async Task<ActionResult<CourierEarningDto>> GetEarning(Guid id)
         {
             var earning = await _courierEarningService.GetEarningByIdAsync(id);

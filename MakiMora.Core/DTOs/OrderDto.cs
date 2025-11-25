@@ -27,7 +27,7 @@ namespace MakiMora.Core.DTOs
     {
         public Guid Id { get; set; }
         public ProductDto Product { get; set; } = null!;
-        public int Quantity { get; set; }
+        public int Quantity { get; set; } = 1;
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
         public OrderItemStatusDto Status { get; set; } = null!;
@@ -43,8 +43,8 @@ namespace MakiMora.Core.DTOs
         public string Name { get; set; } = string.Empty;
         public string DisplayName { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public int SortOrder { get; set; }
-        public bool IsActive { get; set; }
+        public int SortOrder { get; set; } = 0;
+        public bool IsActive { get; set; } = true;
     }
 
     public class OrderItemStatusDto
@@ -53,8 +53,8 @@ namespace MakiMora.Core.DTOs
         public string Name { get; set; } = string.Empty;
         public string DisplayName { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public int SortOrder { get; set; }
-        public bool IsActive { get; set; }
+        public int SortOrder { get; set; } = 0;
+        public bool IsActive { get; set; } = true;
     }
     
     public class CreateOrderRequestDto
