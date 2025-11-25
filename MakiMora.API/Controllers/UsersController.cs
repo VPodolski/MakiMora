@@ -37,7 +37,7 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserDto>> CreateUser([FromBody] Core.DTOs.Auth.CreateUserRequestDto createUserDto)
+        public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserRequestDto createUserDto)
         {
             if (!ModelState.IsValid)
             {
@@ -56,10 +56,7 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
-        public async Task<ActionResult<UserDto>> UpdateUser(Guid id, [FromBody] Core.DTOs.Auth.UpdateUserRequestDto updateUserDto)
+        public async Task<ActionResult<UserDto>> UpdateUser(Guid id, [FromBody] UpdateUserRequestDto updateUserDto)
         {
             if (!ModelState.IsValid)
             {
@@ -78,8 +75,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             var result = await _userService.DeleteUserAsync(id);
@@ -92,9 +87,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPost("{userId}/roles/{roleId}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
         public async Task<IActionResult> AssignRoleToUser(Guid userId, Guid roleId)
         {
             var result = await _userService.AssignRoleToUserAsync(userId, roleId);
@@ -107,9 +99,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpDelete("{userId}/roles/{roleId}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
         public async Task<IActionResult> RemoveRoleFromUser(Guid userId, Guid roleId)
         {
             var result = await _userService.RemoveRoleFromUserAsync(userId, roleId);
@@ -122,9 +111,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPost("{userId}/locations/{locationId}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
         public async Task<IActionResult> AssignLocationToUser(Guid userId, Guid locationId)
         {
             var result = await _userService.AssignLocationToUserAsync(userId, locationId);
@@ -137,9 +123,6 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpDelete("{userId}/locations/{locationId}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
         public async Task<IActionResult> RemoveLocationFromUser(Guid userId, Guid locationId)
         {
             var result = await _userService.RemoveLocationFromUserAsync(userId, locationId);

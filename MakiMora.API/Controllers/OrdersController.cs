@@ -10,34 +10,14 @@ namespace MakiMora.API.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _orderService;
-        private readonly IUserService _userService;
 
-        public OrdersController(IOrderService orderService, IUserService userService)
+        public OrdersController(IOrderService orderService)
         {
             _orderService = orderService;
-            _userService = userService;
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] Core.DTOs.CreateOrderRequestDto createOrderDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                var order = await _orderService.CreateOrderAsync(createOrderDto);
-                return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<OrderDto>> GetOrder(Guid id)
         {
             var order = await _orderService.GetOrderByIdAsync(id);
@@ -79,15 +59,55 @@ namespace MakiMora.API.Controllers
             return Ok(orders);
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderRequestDto createOrderDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var order = await _orderService.CreateOrderAsync(createOrderDto);
+                return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPatch("{id}/status")]
+        [Authorize(Roles = "manager")]
+        public async Task<ActionResult<OrderDto>> UpdateOrderStatus(Guid id, [FromBody] UpdateOrderStatusRequestDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var order = await _orderService.UpdateOrderStatusAsync(id, request.StatusId, request.Note);
+                return Ok(order);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
         [HttpGet("kitchen")]
         [Authorize(Roles = "sushi_chef")]
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetKitchenOrders([FromQuery] Guid locationId)
         {
             // Get orders with status "pending" or "preparing" for the kitchen
             var orders = await _orderService.GetOrdersByLocationAsync(locationId);
-            var filteredOrders = orders.Where(o => o.Status.Name == "pending" || o.Status.Name == "preparing");
+            var kitchenOrders = orders.Where(o => o.Status.Name == "pending" || o.Status.Name == "preparing");
 
-            return Ok(filteredOrders);
+            return Ok(kitchenOrders);
         }
 
         [HttpGet("packing")]
@@ -96,9 +116,9 @@ namespace MakiMora.API.Controllers
         {
             // Get orders with status "ready" for packing
             var orders = await _orderService.GetOrdersByLocationAsync(locationId);
-            var filteredOrders = orders.Where(o => o.Status.Name == "ready");
+            var packingOrders = orders.Where(o => o.Status.Name == "ready");
 
-            return Ok(filteredOrders);
+            return Ok(packingOrders);
         }
 
         [HttpPatch("{id}/items/{itemId}/status")]
@@ -170,64 +190,5 @@ namespace MakiMora.API.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
-
-        [HttpPatch("{id}/status")]
-        [Authorize(Roles = "manager")]
-        public async Task<ActionResult<OrderDto>> UpdateOrderStatus(Guid id, [FromBody] UpdateOrderStatusRequestDto request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                var order = await _orderService.UpdateOrderStatusAsync(id, request.StatusId, request.Note);
-                return Ok(order);
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-        }
-
-        private async Task<Guid?> GetStatusIdByName(string statusName)
-        {
-            // This would typically be handled by a status service
-            // For now, we'll return common status IDs
-            // In a real implementation, this should be retrieved from the database
-            switch (statusName)
-            {
-                case "pending":
-                    return Guid.Parse("11111111-1111-1111-1111-11111111"); // This would be replaced with actual DB lookup
-                case "preparing":
-                    return Guid.Parse("22222222-2222-2222-2222-22222222");
-                case "ready":
-                    return Guid.Parse("3333-3333-3333-3333-3333");
-                case "assembled":
-                    return Guid.Parse("4444-4444-4444-4444-4444");
-                case "delivered":
-                    return Guid.Parse("5555-5555-5555-5555-5555");
-                default:
-                    return null;
-            }
-        }
-    }
-
-    public class UpdateOrderItemStatusRequestDto
-    {
-        public Guid StatusId { get; set; }
-        public string? Note { get; set; }
-    }
-
-    public class AssignCourierRequestDto
-    {
-        public Guid CourierId { get; set; }
-    }
-
-    public class UpdateOrderStatusRequestDto
-    {
-        public Guid StatusId { get; set; }
-        public string? Note { get; set; }
     }
 }

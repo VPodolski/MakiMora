@@ -57,7 +57,8 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductDto>> CreateProduct([FromBody] Core.DTOs.CreateProductRequestDto createProductDto)
+        [Authorize(Roles = "manager")]
+        public async Task<ActionResult<ProductDto>> CreateProduct([FromBody] CreateProductRequestDto createProductDto)
         {
             if (!ModelState.IsValid)
             {
@@ -76,7 +77,8 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ProductDto>> UpdateProduct(Guid id, [FromBody] Core.DTOs.UpdateProductRequestDto updateProductDto)
+        [Authorize(Roles = "manager")]
+        public async Task<ActionResult<ProductDto>> UpdateProduct(Guid id, [FromBody] UpdateProductRequestDto updateProductDto)
         {
             if (!ModelState.IsValid)
             {
@@ -95,6 +97,7 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "manager")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
             var result = await _productService.DeleteProductAsync(id);
@@ -107,6 +110,7 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPatch("{id}/availability")]
+        [Authorize(Roles = "manager")]
         public async Task<ActionResult<ProductDto>> UpdateProductAvailability(Guid id, [FromBody] UpdateProductAvailabilityRequestDto request)
         {
             if (!ModelState.IsValid)
@@ -126,6 +130,7 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpPatch("{id}/stop-list")]
+        [Authorize(Roles = "manager")]
         public async Task<ActionResult<ProductDto>> UpdateProductStopListStatus(Guid id, [FromBody] UpdateProductStopListStatusRequestDto request)
         {
             if (!ModelState.IsValid)

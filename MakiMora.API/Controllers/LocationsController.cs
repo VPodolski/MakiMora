@@ -7,7 +7,6 @@ namespace MakiMora.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "manager,hr")]
     public class LocationsController : ControllerBase
     {
         private readonly ILocationService _locationService;
@@ -18,6 +17,7 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<LocationDto>>> GetLocations()
         {
             var locations = await _locationService.GetLocationsAsync();
@@ -25,6 +25,7 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<LocationDto>> GetLocation(Guid id)
         {
             var location = await _locationService.GetLocationByIdAsync(id);
@@ -90,9 +91,18 @@ namespace MakiMora.API.Controllers
         }
 
         [HttpGet("with-users")]
+        [Authorize(Roles = "manager,hr")]
         public async Task<ActionResult<IEnumerable<LocationDto>>> GetLocationsWithUsers()
         {
             var locations = await _locationService.GetLocationsWithUsersAsync();
+            return Ok(locations);
+        }
+
+        [HttpGet("by-manager/{managerId}")]
+        [Authorize(Roles = "hr")]
+        public async Task<ActionResult<IEnumerable<LocationDto>>> GetLocationsByManager(Guid managerId)
+        {
+            var locations = await _locationService.GetLocationsByManagerAsync(managerId);
             return Ok(locations);
         }
     }
