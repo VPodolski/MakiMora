@@ -43,7 +43,7 @@ const OrderForm: React.FC = () => {
         deliveryFee: deliveryFee,
         comment: formData.comment,
         items: state.items.map(item => ({
-          productId: item.productId,
+          productId: item.id,
           quantity: item.quantity
         }))
       };
