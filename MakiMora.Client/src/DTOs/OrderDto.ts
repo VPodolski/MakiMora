@@ -1,40 +1,41 @@
-import type { User, Location, Category } from './index';
-import type { Product } from './product';
+import type { UserDto } from './UserDto';
+import type { ProductDto } from './ProductDto';
+import type { OrderStatusDto } from './OrderStatusDto';
 
-export interface Order {
+export interface OrderDto {
   id: string;
   orderNumber: string;
   customerName: string;
   customerPhone: string;
   customerAddress: string;
   locationId: string;
-  status: OrderStatus;
-  courier?: User;
-  assembler?: User;
+  status: OrderStatusDto;
+  courier?: UserDto;
+  assembler?: UserDto;
   totalAmount: number;
   deliveryFee: number;
   comment?: string;
-  items: OrderItem[];
+  items: OrderItemDto[];
   createdAt: string;
   updatedAt: string;
   deliveryTime?: string;
   completedAt?: string;
 }
 
-export interface OrderItem {
+export interface OrderItemDto {
   id: string;
-  product: Product;
+  product: ProductDto;
   quantity: number;
   unitPrice: number;
   totalPrice: number;
-  status: OrderItemStatus;
-  preparedBy?: User;
+  status: OrderItemStatusDto;
+  preparedBy?: UserDto;
   preparedAt?: string;
-  assembledBy?: User;
+  assembledBy?: UserDto;
   assembledAt?: string;
 }
 
-export interface OrderStatus {
+export interface OrderItemStatusDto {
   id: string;
   name: string;
   displayName: string;
@@ -43,16 +44,7 @@ export interface OrderStatus {
   isActive: boolean;
 }
 
-export interface OrderItemStatus {
-  id: string;
-  name: string;
-  displayName: string;
-  description?: string;
-  sortOrder: number;
-  isActive: boolean;
-}
-
-export interface CreateOrderRequest {
+export interface CreateOrderRequestDto {
   customerName: string;
   customerPhone: string;
   customerAddress: string;
@@ -60,24 +52,29 @@ export interface CreateOrderRequest {
   deliveryFee: number;
   comment?: string;
   deliveryTime?: string;
-  items: CreateOrderItemRequest[];
+  items: CreateOrderItemRequestDto[];
 }
 
-export interface CreateOrderItemRequest {
+export interface CreateOrderItemRequestDto {
   productId: string;
   quantity: number;
 }
 
-export interface UpdateOrderStatusRequest {
+export interface UpdateOrderItemStatusRequestDto {
   statusId: string;
   note?: string;
 }
 
-export interface UpdateOrderItemStatusRequest {
-  statusId: string;
-  note?: string;
-}
-
-export interface AssignCourierRequest {
+export interface AssignCourierRequestDto {
   courierId: string;
+}
+
+export interface UpdateOrderStatusRequestDto {
+  statusId: string;
+  note?: string;
+}
+
+export interface UpdateOrderItemStatusRequestDto {
+  statusId: string;
+  note?: string;
 }

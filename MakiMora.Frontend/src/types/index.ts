@@ -30,6 +30,17 @@ export interface Location {
   updatedAt: string;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  locationId: string;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface LoginRequest {
   username: string;
   password: string;
@@ -50,3 +61,7 @@ export interface AuthState {
   logout: () => void;
   initializeAuth: () => Promise<void>;
 }
+
+// Export all type modules
+export * from './product';
+export * from './order';
